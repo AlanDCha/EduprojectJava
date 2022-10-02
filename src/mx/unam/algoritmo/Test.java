@@ -7,7 +7,7 @@ public class Test {
         Scanner cin = new Scanner(System.in);
         Scanner cin2 = new Scanner(System.in);
         int entrada;
-        String numero;
+        int number;
 
         System.out.println("---------------------");
         System.out.println("Juego de adivinar un numero");
@@ -22,15 +22,23 @@ public class Test {
         switch (entrada){
             case 1:
                 System.out.print("Ingrese el numero: ");
-                numero = cin2.next();
+                number = cin2.nextInt();
                 cin2.close();
+                int[] numero = new int[4];
+                numero[0] = number / 1000;
+                numero[1] = (number / 100) % 10;
+                numero[2] = (number / 10 ) % 10;
+                numero[3] = number % 10;
+
                 Algoritmo alg = new Algoritmo(numero);
                 alg.showAlg();
                 break;
+
             case 2:
                 Algoritmo alg2 = new Algoritmo(GenerateRand.generateRandom());
                 alg2.showAlg();
                 break;
+
             default:
                 break;
         }
