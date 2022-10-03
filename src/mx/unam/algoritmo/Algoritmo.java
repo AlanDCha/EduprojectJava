@@ -12,6 +12,8 @@ public class Algoritmo {
     private boolean[] prematch_second = {false, false, false, false};
     private boolean[] match_first = {false, false, false, false};
     private boolean[] match_second = {false, false, false, false};
+    private int[][] matrix = new int[9][4];
+    private boolean band = false;
 
     public Algoritmo(int[] number){
         this.number = number;
@@ -27,12 +29,21 @@ public class Algoritmo {
         while (counter <= 9) {
             System.out.println("||Ciclo: " + counter + " ||");
             if (checkNumEquals(number, compar)) {
+                band = true;
                 break;
             } else {
                 counter++;
+                for (int i = 0; i < compar.length; i++) {
+                    matrix[counter - 1][i] = compar[i];
+                }
                 printOut(number, compar);
                 compar = modifyDigit(compar);
             } 
+        }
+        if (band){
+            System.out.println("I did it :)");
+        } else{
+            System.out.println("I couldn't solve it. So sorry :‘(");
         }
     }
 
@@ -79,7 +90,12 @@ public class Algoritmo {
                 }
             } 
         }
-
+        for (int i = 0; i < 4; i++) {
+            prematch_first[i] = false;
+            prematch_second[i] = false;
+            match_first[i] = false;
+            match_second[i] = false;
+        }
         return count_right == 4;
     }
 
@@ -95,9 +111,18 @@ public class Algoritmo {
         System.out.println("Digitos en posicion incorrecta: " + count_wrong);
     }
 
-    private int[] modifyDigit(int [] comparison) {
+    private int[] modifyDigit(int[] comparison) {
         // TODO: MODIFY DIGIT ON POSITION
         int[] example = new int[4];
+        int digit;
+        if (count_right == 0 && count_wrong == 0){
+            for (int i = 0; i < example.length; i++) {
+                do {
+                    digit = GenerateRand.genOneDigitRand();
+                } while (digit == comparison[i]);
+                example[i] = digit;
+            }
+        }
         return example;
     }
 }
