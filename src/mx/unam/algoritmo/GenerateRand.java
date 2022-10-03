@@ -1,5 +1,6 @@
 package mx.unam.algoritmo;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class GenerateRand {
@@ -22,5 +23,18 @@ public class GenerateRand {
 
     public static int genOneDigitRand() {
         return new Random().nextInt(number2);
+    }
+
+    public static boolean contains(final int[] arr, final int key){
+        return Arrays.stream(arr).anyMatch(i -> i == key);
+    }
+
+    public static byte repeatedElementsArray(final int[] arr, final int key) {
+        byte counter = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == key)
+            counter++;
+        } 
+        return counter;
     }
 }
