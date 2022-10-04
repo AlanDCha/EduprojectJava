@@ -8,11 +8,11 @@ public class Algoritmo {
     private int[] compar = new int[4];
     private byte count_right = 0;
     private byte count_wrong = 0;
-    private boolean[] prematch_first = {false, false, false, false};
+    private boolean[] prematch_first  = {false, false, false, false};
     private boolean[] prematch_second = {false, false, false, false};
-    private boolean[] match_first = {false, false, false, false};
+    private boolean[] match_first  = {false, false, false, false};
     private boolean[] match_second = {false, false, false, false};
-    private int[][] matrix = new int[9][4];
+    private int[][] matrix = new int[9][6];
     private boolean band = false;
 
     public Algoritmo(int[] number){
@@ -34,7 +34,13 @@ public class Algoritmo {
             } else {
                 counter++;
                 for (int i = 0; i < compar.length; i++) {
-                    matrix[counter - 1][i] = compar[i];
+                    if (i < 4){
+                        matrix[counter - 1][i] = compar[i];
+                    } else if (i == 5){
+                        matrix[counter - 1][i] = count_right;
+                    } else {
+                        matrix[counter - 1][i] = count_wrong;
+                    }
                 }
                 printOut(number, compar);
                 compar = modifyDigit(compar);
@@ -112,7 +118,6 @@ public class Algoritmo {
     }
 
     private int[] modifyDigit(int[] comparison) {
-        // TODO: MODIFY DIGIT ON POSITION
         int[] example = new int[4];
         int digit;
         if (count_right == 0 && count_wrong == 0){

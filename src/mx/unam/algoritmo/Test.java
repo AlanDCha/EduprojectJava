@@ -35,7 +35,7 @@ public class Test {
                 break;
 
             case 2:
-                Algoritmo alg2 = new Algoritmo(GenerateRand.generateRandom());
+                Algoritmo alg2 = new Algoritmo(GenerateRandNumbers.generateRandom());
                 alg2.showAlg();
                 break;
 

@@ -3,7 +3,7 @@ package mx.unam.algoritmo;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GenerateRand {
+public class GenerateRandNumbers {
     
     private static int number = 10000;
     private static int number2 = 10;
@@ -20,6 +20,8 @@ public class GenerateRand {
 
         return numero;
     }
+
+
 
     public static int genOneDigitRand() {
         return new Random().nextInt(number2);
