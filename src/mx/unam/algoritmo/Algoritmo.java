@@ -1,23 +1,37 @@
 package mx.unam.algoritmo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Algoritmo {
 
+    // * This is the number generated
     private int[] number = new int[4];
+    // * This is the number to compare
     private int[] compar = new int[4];
+    // * These are the counters for each attempt
     private byte count_right = 0;
     private byte count_wrong = 0;
+    // * These are the prematch and match
     private boolean[] prematch_first  = {false, false, false, false};
     private boolean[] prematch_second = {false, false, false, false};
     private boolean[] match_first  = {false, false, false, false};
     private boolean[] match_second = {false, false, false, false};
+    // * This matrix save all the attempts and the counters too.
     private int[][] matrix = new int[9][6];
+    // * This is a flag that indicates if the number generated is right
     private boolean band = false;
+    // * This array save all number that are considerated as droped
+    private ArrayList<Integer> droped_numbers = new ArrayList<>();
+    // * This array save all pre-pinned numbers 
+    private ArrayList<Integer> prepin_nmbs = new ArrayList<>();
+    // * This array save all pinned numbers 
+    private ArrayList<Integer> pinned_nmbs = new ArrayList<>();
 
     public Algoritmo(int[] number){
         this.number = number;
-        compar = GenerateRand.generateRandom();
+        compar = GenerateRandNumbers.generateDiffRandNumbers();
     }
 
     public void showAlg(){
@@ -32,34 +46,34 @@ public class Algoritmo {
                 band = true;
                 break;
             } else {
-                counter++;
                 for (int i = 0; i < compar.length; i++) {
                     if (i < 4){
                         matrix[counter - 1][i] = compar[i];
-                    } else if (i == 5){
+                    } else if (i == 4){
                         matrix[counter - 1][i] = count_right;
                     } else {
                         matrix[counter - 1][i] = count_wrong;
                     }
                 }
                 printOut(number, compar);
-                compar = modifyDigit(compar);
+                compar = modifyDigit(compar, counter);
+                counter++;
             } 
         }
         if (band){
             System.out.println("I did it :)");
         } else{
-            System.out.println("I couldn't solve it. So sorry :‘(");
+            System.out.println("I couldn't solve it. So sorry :(");
         }
     }
 
-    public boolean checkNumEquals(int[] first, int[] second){
+    public boolean checkNumEquals(final int[] first, int[] second){
         // Initializing counters
         count_right = 0;
         count_wrong = 0;
         // Creating nested cycles for checking both numbers
         for (int i = 0; i < 4; i++) {
-            if (GenerateRand.contains(first, second[i])){
+            if (GenerateRandNumbers.contains(first, second[i])){
                 for (int j = 0; j < 4; j++) {
                     if (second[i] == first[j]) {
                         if (i == j) {
@@ -117,17 +131,30 @@ public class Algoritmo {
         System.out.println("Digitos en posicion incorrecta: " + count_wrong);
     }
 
-    private int[] modifyDigit(int[] comparison) {
-        int[] example = new int[4];
+    private int[] modifyDigit(int[] comparison, int intent) {
+        // Creating the modified number
+        int[] modified = new int[4];
+        int wnod = matrix[intent][4];
+        int rnod = matrix[intent][5];
         int digit;
-        if (count_right == 0 && count_wrong == 0){
-            for (int i = 0; i < example.length; i++) {
-                do {
-                    digit = GenerateRand.genOneDigitRand();
-                } while (digit == comparison[i]);
-                example[i] = digit;
+        int index;
+
+        if (wnod == 0 && rnod == 0) {
+        // * If no number doesn't equals to the number to find
+            for (int i = 0; i < 4; i++) {
+                droped_numbers.add(comparison[i]);
             }
+            modified = GenerateRandNumbers.pickRandNumExceptArray(comparison);
+        } else if (wnod == 0 && rnod == 1){
+        // * If there is only one digit that matches with any digit of number
+        // Pick only one random digit from the array
+            index = new Random().nextInt(comparison.length);
+            digit = comparison[index];
+            prepin_nmbs.add(digit);
+            modified = GenerateRandNumbers.generateThreeDigit(comparison, 
+                                                                digit, index);
         }
-        return example;
+        // ! If W + R == 4. Focus on these digits and droped the others
+        return modified;
     }
 }
