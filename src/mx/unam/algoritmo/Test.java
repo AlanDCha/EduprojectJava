@@ -1,46 +1,103 @@
 package mx.unam.algoritmo;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Test {
     public static void main(String[] args) {
         Scanner cin = new Scanner(System.in);
-        Scanner cin2 = new Scanner(System.in);
-        int entrada;
-        int number;
+        // Scanner cin2 = new Scanner(System.in);
+        // Scanner choice = new Scanner(System.in);
+        int input;
+        int[] number = new int[4];
+        int num;
 
         System.out.println("---------------------");
-        System.out.println("Juego de adivinar un numero");
+        System.out.println("Guess the number game");
         System.out.println("---------------------");
-        System.out.println("1. Introduzca un numero aleatorio (0-9999)");
-        System.out.println("2. Que el sistema genere un numero");
-        System.out.print("\tSeleccione la opcion adecuada: ");
+        System.out.println("1. I guess the number");
+        System.out.println("2. The system guess the number");
+        System.out.print("\tChoose your option: ");
 
-        entrada = cin.nextInt();
-        cin.close();
+        input = cin.nextInt();
 
-        switch (entrada){
+        switch (input) {
             case 1:
-                System.out.print("Ingrese el numero: ");
-                number = cin2.nextInt();
-                cin2.close();
-                int[] numero = new int[4];
-                numero[0] = number / 1000;
-                numero[1] = (number / 100) % 10;
-                numero[2] = (number / 10 ) % 10;
-                numero[3] = number % 10;
+                int[] to_find = new int[4];
+                to_find = GenerateRandNumbers.generateRandom();
+                boolean flag = false;
+                byte counter = 1;
+                // System.out.println(Arrays.toString(to_find));
 
-                Algoritmo alg = new Algoritmo(numero);
-                alg.showAlg();
+                while (counter < 10) {
+                    System.out.println("Intent " + counter);
+                    System.out.print("Enter the number: ");
+                    // Catch the number introduced by user
+                    num = cin.nextInt();
+                    // Convert to array
+                    number = guessNumber(num);
+                    Algoritmo myAlg = new Algoritmo();
+                    flag = myAlg.checkNumEquals(to_find, number);
+                    myAlg.printOut(to_find);
+                    counter++;
+                    if (flag) {
+                        System.out.println("You did it!!");
+                        System.out.println(Arrays.toString(to_find));
+                        break;
+                    }
+                }
+                if (!flag) {
+                    System.out.println("You couldn't");
+                    System.out.println(Arrays.toString(to_find));
+                }
                 break;
-
+            
             case 2:
-                Algoritmo alg2 = new Algoritmo(GenerateRandNumbers.generateRandom());
-                alg2.showAlg();
-                break;
+                Scanner choice2 = new Scanner(System.in);
+                int my_choice;
+                System.out.println("1. I decide the number to find");
+                System.out.println("2. The system decides the number to find");
+                my_choice = choice2.nextInt();
+                switch (my_choice) {
+                    case 1:
+                        int numb;
+                        System.out.print("Ingrese el numero: ");
+                        numb = cin.nextInt();
+                        // cin.close();
+                        number[0] =  numb / 1000;
+                        number[1] = (numb / 100) % 10;
+                        number[2] = (numb / 10 ) % 10;
+                        number[3] =  numb % 10;
 
+                        Algoritmo alg = new Algoritmo(number);
+                        alg.showAlg();
+                        break;
+                    
+                    case 2:
+                        Algoritmo alg2 = new Algoritmo(GenerateRandNumbers.
+                                                            generateRandom());
+                        alg2.showAlg();
+                        break;
+                
+                    default:
+                        break;
+                }
+                choice2.close();
+                break;
+        
             default:
                 break;
         }
+        cin.close();
+
+    }
+
+    public static int[] guessNumber(int num){
+        int[] array = new int[4];
+        array[0] =  num / 1000;
+        array[1] = (num / 100) % 10;
+        array[2] = (num / 10 ) % 10;
+        array[3] =  num % 10;
+        return array;
     }
 }
