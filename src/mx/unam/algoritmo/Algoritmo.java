@@ -8,7 +8,7 @@ public class Algoritmo {
     // * This is the number generated
     private int[] number = new int[4];
     // * This is the number to compare
-    private int[] compar = GenerateRandNumbers.mixDiffRandDigits();
+    private int[] compar = MixRandNums.mixDiffRandDigits();
     // * These are the counters for each attempt
     private byte count_right = 0;
     private byte count_wrong = 0;
@@ -77,7 +77,7 @@ public class Algoritmo {
         count_wrong = 0;
         // Creating nested cycles for checking both numbers
         for (int i = 0; i < 4; i++) {
-            if (GenerateRandNumbers.contains(first, second[i])){
+            if (MixRandNums.contains(first, second[i])){
                 for (int j = 0; j < 4; j++) {
                     if (second[i] == first[j]) {
                         if (i == j) {
@@ -151,14 +151,14 @@ public class Algoritmo {
                     dropped.add(compare[i]);
                 }
                 if (counter == 1){
-                    modified = GenerateRandNumbers.mixDiffRandDigits(dropped);
+                    modified = MixRandNums.mixDiffRandDigits(dropped);
                 } else {
-                    modified = GenerateRandNumbers.mixDiffRandDigits(dropped, 
+                    modified = MixRandNums.mixDiffRandDigits(dropped, 
                                 matrix, counters_right, counters_wrong);
                 }
             } else { // When W, R != 0
                 if (counter == 1){
-                    modified = GenerateRandNumbers.mixDiffRandDigits(compare);
+                    modified = MixRandNums.mixDiffRandDigits(compare);
                 } else {
                     if (!change && counter == 5){
                         if (!checkSumCounters()) {
@@ -166,7 +166,7 @@ public class Algoritmo {
                         }
                     }
                     if (!change){
-                        modified = GenerateRandNumbers.mixDiffRandDigits(dropped, 
+                        modified = MixRandNums.mixDiffRandDigits(dropped, 
                                     matrix, counters_right, counters_wrong);
                     } else {
                         // TODO: Implement the number to repeat
@@ -183,7 +183,7 @@ public class Algoritmo {
                 }
                 set_pinned_numbers = true;
             }
-            modified = GenerateRandNumbers.sortDigits(matrix, prepin_nmbs);
+            modified = MixRandNums.sortDigits(matrix, prepin_nmbs);
         }
         return modified;
     }

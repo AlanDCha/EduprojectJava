@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GenerateRandNumbers {
+public class MixRandNums {
     
     private static final int number = 10000;
     private static final int number2 = 10;
