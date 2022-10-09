@@ -116,7 +116,7 @@ public class Algoritmo {
                 }
             } 
         }
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < first.length; i++) {
             prematch_first[i] = false;
             prematch_second[i] = false;
             match_first[i] = false;

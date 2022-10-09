@@ -38,7 +38,7 @@ public class Test {
                     number = guessNumber(num);
                     Algoritmo myAlg = new Algoritmo();
                     flag = myAlg.checkNumEquals(to_find, number);
-                    myAlg.printOut(to_find);
+                    myAlg.printOut(number);
                     counter++;
                     if (flag) {
                         System.out.println("You did it!!");
