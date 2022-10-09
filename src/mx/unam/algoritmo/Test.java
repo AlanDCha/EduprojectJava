@@ -24,7 +24,7 @@ public class Test {
         switch (input) {
             case 1:
                 int[] to_find = new int[4];
-                to_find = GenerateRandNumbers.generateRandom();
+                to_find = GenerateRandNumbers.mixRandDigits();
                 boolean flag = false;
                 byte counter = 1;
                 // System.out.println(Arrays.toString(to_find));
@@ -75,7 +75,7 @@ public class Test {
                     
                     case 2:
                         Algoritmo alg2 = new Algoritmo(GenerateRandNumbers.
-                                                            generateRandom());
+                                                            mixRandDigits());
                         alg2.showAlg();
                         break;
                 

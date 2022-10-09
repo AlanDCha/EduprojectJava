@@ -2,14 +2,13 @@ package mx.unam.algoritmo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 public class Algoritmo {
 
     // * This is the number generated
     private int[] number = new int[4];
     // * This is the number to compare
-    private int[] compar = GenerateRandNumbers.generateDiffRandNumbers();
+    private int[] compar = GenerateRandNumbers.mixDiffRandDigits();
     // * These are the counters for each attempt
     private byte count_right = 0;
     private byte count_wrong = 0;
@@ -18,18 +17,25 @@ public class Algoritmo {
     private boolean[] prematch_second = {false, false, false, false};
     private boolean[] match_first  = {false, false, false, false};
     private boolean[] match_second = {false, false, false, false};
-    // * This matrix save all the attempts and the counters too.
-    private int[][] matrix = new int[9][6];
+    // * This matrix saves all the attempts and the counters too.
+    private int[][] matrix = new int[9][4];
+    // * This matrix saves all the wrong and right number of digits
+    private int[] counters_right = new int[9];
+    private int[] counters_wrong = new int[9];
     // * This is a flag that indicates if the number generated is right
     private boolean band = false;
     // * This array save all number that are considerated as droped
-    private ArrayList<Integer> droped_numbers = new ArrayList<>();
+    private ArrayList<Integer> dropped = new ArrayList<>();
     // * This array save all pre-pinned numbers 
     private ArrayList<Integer> prepin_nmbs = new ArrayList<>();
     // * This array save all pinned numbers 
     // private ArrayList<Integer> pinned_nmbs = new ArrayList<>();
     // * This flag save all pinned numbers and won't change it
     private boolean set_pinned_numbers = false;
+    // * This counter is for each intent
+    private byte counter = 1;
+    // * This flag is to detect when it's needed to change strategy 
+    private boolean change = false;
 
     public Algoritmo(int[] number){
         this.number = number;
@@ -38,7 +44,6 @@ public class Algoritmo {
     public Algoritmo(){}
 
     public void showAlg(){
-        byte counter = 1;
         System.out.println("-----------------");
         System.out.println("El digito es el siguiente");
         System.out.println(Arrays.toString(number));
@@ -50,14 +55,10 @@ public class Algoritmo {
                 break;
             } else {
                 for (int i = 0; i < compar.length; i++) {
-                    if (i < 4){
-                        matrix[counter - 1][i] = compar[i];
-                    } else if (i == 4){
-                        matrix[counter - 1][i] = count_right;
-                    } else {
-                        matrix[counter - 1][i] = count_wrong;
-                    }
+                    matrix[counter - 1][i] = compar[i];
                 }
+                counters_right[counter - 1] = count_right;
+                counters_wrong[counter - 1] = count_wrong;
                 printOut(compar);
                 compar = modifyDigit(compar, counter);
                 counter++;
@@ -135,49 +136,63 @@ public class Algoritmo {
         System.out.println("Digitos en posicion incorrecta: " + count_wrong);
     }
 
-    private int[] modifyDigit(int[] comparison, int intent) {
+    private int[] modifyDigit(int[] compare, int intent) {
         // Creating the modified number
         int[] modified = new int[4];
-        int wnod = matrix[intent][4];
-        int rnod = matrix[intent][5];
-        int digit;
-        int index;
+        // Highlighting the current counters
+        int rnod = counters_right[intent];
+        int wnod = counters_wrong[intent];
 
-        // ! If W + R == 4. Focus on these digits and droped the others
+        // ! If W + R == 4. Focus on these digits and dropped the others
         if (wnod + rnod != 4) {
             if (wnod == 0 && rnod == 0) {
             // * If no number doesn't equals to the number to find
                 for (int i = 0; i < 4; i++) {
-                    droped_numbers.add(comparison[i]);
+                    dropped.add(compare[i]);
                 }
-                modified = GenerateRandNumbers.
-                                            pickRandNumExceptArray(comparison);
-            } else if (wnod == 0 && rnod == 1){
-            // * If there's only one digit that matches with any digit of number
-            // Pick only one random digit from the array
-                index = new Random().nextInt(comparison.length);
-                digit = comparison[index];
-                prepin_nmbs.add(digit);
-                modified = GenerateRandNumbers.generateThreeDigit(comparison, 
-                                                                digit, index);
+                if (counter == 1){
+                    modified = GenerateRandNumbers.mixDiffRandDigits(dropped);
+                } else {
+                    modified = GenerateRandNumbers.mixDiffRandDigits(dropped, 
+                                matrix, counters_right, counters_wrong);
+                }
+            } else { // When W, R != 0
+                if (counter == 1){
+                    modified = GenerateRandNumbers.mixDiffRandDigits(compare);
+                } else {
+                    if (!change && counter == 5){
+                        if (!checkSumCounters()) {
+                            change = true;
+                        }
+                    }
+                    if (!change){
+                        modified = GenerateRandNumbers.mixDiffRandDigits(dropped, 
+                                    matrix, counters_right, counters_wrong);
+                    } else {
+                        // TODO: Implement the number to repeat
+                        // TODO: Complete the repeatDigits function
+                    }
+                }
             }
             
-        } else {
+        } else { // When W + R == 4
             if (!set_pinned_numbers){
                 prepin_nmbs.clear();
-                for (int iterable : comparison) {
+                for (int iterable : compare) {
                     prepin_nmbs.add(iterable);
                 }
                 set_pinned_numbers = true;
             }
-            // TODO: Send to a function the following parameters: wnod
-            /**
-             * First searching intents before that contains the same condition
-             * If exist intents then analizing it. search for match digit 
-             * If wnod == 0 -> re-order 3 numbers and don't move from position 1
-             * In fact. Re-order 4 - wnod and pin in position wnod digits
-             */
+            modified = GenerateRandNumbers.sortDigits(matrix, prepin_nmbs);
         }
         return modified;
+    }
+
+    public boolean checkSumCounters(){
+        for (int i = 0; i < counters_right.length; i++) {
+            if (counters_right[i] + counters_wrong[i] >= 3)
+            return true;
+        }
+        return false;
     }
 }

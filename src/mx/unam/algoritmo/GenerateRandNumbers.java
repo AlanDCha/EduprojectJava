@@ -1,5 +1,7 @@
 package mx.unam.algoritmo;
 
+import java.util.ArrayList;
+// import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -8,7 +10,7 @@ public class GenerateRandNumbers {
     private static final int number = 10000;
     private static final int number2 = 10;
 
-    public static int[] generateRandom(){
+    public static int[] mixRandDigits(){
         Random rand = new Random();
         int[] numero = new int[4];
 
@@ -21,99 +23,95 @@ public class GenerateRandNumbers {
         return numero;
     }
 
-    public static int[] generateDiffRandNumbers(){
+    public static int[] mixDiffRandDigits(){
         Random rand = new Random();
-        int[] numero = new int[4];
-        for (int i = 0; i < 4; i++) {
+        int[] num = new int[4];
+        int i = 0;
+        boolean flag = false;
+        while (i < num.length) {
+            flag = false;
             int my_number = rand.nextInt(number2);
             if (i != 0){
-                if (numero[i - 1] == my_number)
-                i--;
-                else {
-                    numero[i] = my_number;
+                for (int j = i; j >= 0; j++) {
+                    if (num[j] == my_number){
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    num[i] = my_number;
+                    i++;
+                }
+            } else {
+                num[i] = my_number;
+            }
+        }
+        return num;
+    }
+
+    public static int[] mixDiffRandDigits(int[] array){
+        int[] modified = new int[4];
+        Random rnd = new Random();
+        int i = 0;
+        boolean flag = false;
+        int intent;
+
+        while (i < 4) {
+            flag = false;
+            intent = rnd.nextInt(number2);
+            if (!contains(array, intent)){
+                for (int j = i; j >= 0; j++) {
+                    if (modified[j] == intent){
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag){
+                    modified[i] = intent;
+                    i++;
                 }
             }
         }
-        return numero;
+        return modified;
     }
 
-    public static int genOneDigitRand() {
-        return new Random().nextInt(number2);
+    public static int[] mixDiffRandDigits(ArrayList<Integer> dropped){
+        // This is the new modified array 
+        int[] modified = new int[4];
+        // object of Random class
+        Random rnd = new Random();
+        // Each loop will compare with dropped array
+        int test;
+        // Counter
+        int i = 0;
+        while (i < 4){
+            test = rnd.nextInt(number2);
+            if (dropped.contains(test)){
+                modified[i] = test;
+                i++;
+            }
+        }
+
+        return modified;
+    }
+
+    public static int[] mixDiffRandDigits(ArrayList<Integer> dropped, 
+        int[][] matrix, int[] right, int[] wrong){
+        int[] modified = new int[4];
+        // TODO: Complete the function
+        // Taking care of array previous  and (R, W)
+        return modified;
     }
 
     public static boolean contains(final int[] arr, final int key){
         return Arrays.stream(arr).anyMatch(i -> i == key);
     }
 
-    public static byte repeatedElementsArray(final int[] arr, final int key) {
-        byte counter = 0;
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == key)
-            counter++;
-        } 
-        return counter;
+    public static int[] sortDigits(int[][] matrix, ArrayList<Integer> p_pinned){
+        int[] modified = new int[4];
+        // TODO: Complete the function
+        // sort the digits taking care of matrix
+        return modified;
     }
 
-    public static int getRandom(int[] array){
-        int rnd = new Random().nextInt(array.length);
-        return array[rnd];
-    }
-
-    public static int[] pickRandNumExceptArray(int[] array) {
-        final int stop = 10;
-        int[] number_picked = new int[4];
-        Random rnd = new Random();
-        byte count = 0;
-        while (count < 4) {
-            int testing = rnd.nextInt(stop);
-            for (int i = 0; i < array.length; i++) {
-                if (array[i] != testing) {
-                    number_picked[i] = testing;
-                    count++;
-                }
-            }
-        }
-        return number_picked;
-    }
-
-    public static int[] generateThreeDigit(int[] array, int picked, int index){
-        // * rnd is for the new index
-        Random rnd = new Random();
-        // * rnd2 is for each digit generated
-        Random rnd2 = new Random();
-        // * Save the new index
-        int new_index;
-        // * The new number
-        int[] comparing_modified = new int[4];
-        // * counter
-        int i = 0;
-        // * Flag
-        boolean flag;
-        // * digit
-        int digit;
-        // * Creating the new index for the picked number. No index token.
-        
-        do {
-            new_index = rnd.nextInt(array.length);
-        } while (new_index != index);
-        
-        while (i < 4){
-            flag = true;
-            if (i == new_index) {
-                comparing_modified[i] = picked;
-                i++;
-            } else {
-                while (true) {
-                    digit = rnd2.nextInt(number2);
-                    flag = contains(array, digit);
-                    if (flag) {
-                        comparing_modified[i] = digit;
-                        break;
-                    }
-                }
-                i++;
-            }
-        }
-        return comparing_modified;
-    }
 }
