@@ -140,8 +140,8 @@ public class Algoritmo {
         // Creating the modified number
         int[] modified = new int[4];
         // Highlighting the current counters
-        int rnod = counters_right[intent];
-        int wnod = counters_wrong[intent];
+        int rnod = counters_right[intent - 1];
+        int wnod = counters_wrong[intent - 1];
 
         // ! If W + R == 4. Focus on these digits and dropped the others
         if (wnod + rnod != 4) {

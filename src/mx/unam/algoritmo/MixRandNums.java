@@ -1,14 +1,14 @@
 package mx.unam.algoritmo;
 
 import java.util.ArrayList;
-// import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class MixRandNums {
     
     private static final int number = 10000;
-    private static final int number2 = 10;
+    private static final int TEN = 10;
 
     public static int[] mixRandDigits(){
         Random rand = new Random();
@@ -24,75 +24,33 @@ public class MixRandNums {
     }
 
     public static int[] mixDiffRandDigits(){
-        Random rand = new Random();
         int[] num = new int[4];
-        int i = 0;
-        boolean flag = false;
-        while (i < num.length) {
-            flag = false;
-            int my_number = rand.nextInt(number2);
-            if (i != 0){
-                for (int j = i; j >= 0; j++) {
-                    if (num[j] == my_number){
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag) {
-                    num[i] = my_number;
-                    i++;
-                }
-            } else {
-                num[i] = my_number;
-            }
-        }
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < TEN; i++) list.add(i);
+        Collections.shuffle(list);
+        for (int i = 0; i < num.length; i++) num[i] = list.get(i);
         return num;
     }
 
     public static int[] mixDiffRandDigits(int[] array){
-        int[] modified = new int[4];
-        Random rnd = new Random();
-        int i = 0;
-        boolean flag = false;
-        int intent;
-
-        while (i < 4) {
-            flag = false;
-            intent = rnd.nextInt(number2);
-            if (!contains(array, intent)){
-                for (int j = i; j >= 0; j++) {
-                    if (modified[j] == intent){
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag){
-                    modified[i] = intent;
-                    i++;
-                }
-            }
+        int[] num = new int[4];
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < TEN; i++) {
+            if (!contains(array, i)) list.add(i);
         }
-        return modified;
+        Collections.shuffle(list);
+        for (int i = 0; i < num.length; i++) num[i] = list.get(i);
+        return num;
     }
 
     public static int[] mixDiffRandDigits(ArrayList<Integer> dropped){
-        // This is the new modified array 
-        int[] modified = new int[4];
-        // object of Random class
-        Random rnd = new Random();
-        // Each loop will compare with dropped array
-        int test;
-        // Counter
-        int i = 0;
-        while (i < 4){
-            test = rnd.nextInt(number2);
-            if (dropped.contains(test)){
-                modified[i] = test;
-                i++;
-            }
-        }
-
-        return modified;
+        int[] num = new int[4];
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < TEN; i++) list.add(i);
+        list.removeIf(x -> dropped.contains(x));
+        Collections.shuffle(list);
+        for (int i = 0; i < num.length; i++) num[i] = list.get(i);
+        return num;
     }
 
     public static int[] mixDiffRandDigits(ArrayList<Integer> dropped, 

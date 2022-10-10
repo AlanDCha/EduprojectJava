@@ -57,18 +57,14 @@ public class Test {
                 int my_choice;
                 System.out.println("1. I decide the number to find");
                 System.out.println("2. The system decides the number to find");
+                System.out.print("\tChoose your option: ");
                 my_choice = choice2.nextInt();
                 switch (my_choice) {
                     case 1:
                         int numb;
-                        System.out.print("Ingrese el numero: ");
+                        System.out.print("Enter the number: ");
                         numb = cin.nextInt();
-                        // cin.close();
-                        number[0] =  numb / 1000;
-                        number[1] = (numb / 100) % 10;
-                        number[2] = (numb / 10 ) % 10;
-                        number[3] =  numb % 10;
-
+                        number = guessNumber(numb);
                         Algoritmo alg = new Algoritmo(number);
                         alg.showAlg();
                         break;
