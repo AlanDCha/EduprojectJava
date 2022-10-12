@@ -154,7 +154,7 @@ public class Algoritmo {
                     modified = MixRandNums.mixDiffRandDigits(dropped);
                 } else {
                     modified = MixRandNums.mixDiffRandDigits(dropped, 
-                                matrix, counters_right, counters_wrong);
+                        matrix, compare, counters_right, counters_wrong, intent);
                 }
             } else { // When W, R != 0
                 if (counter == 1){
@@ -167,7 +167,7 @@ public class Algoritmo {
                     }
                     if (!change){
                         modified = MixRandNums.mixDiffRandDigits(dropped, 
-                                    matrix, counters_right, counters_wrong);
+                        matrix, compare, counters_right, counters_wrong, intent);
                     } else {
                         // TODO: Implement the number to repeat
                         // TODO: Complete the repeatDigits function
