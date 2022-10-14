@@ -79,18 +79,23 @@ public class MixRandNums {
                 for (int j = 0; j < modified.length; j++) numbers.add(j);
                 count_Ri = right[i];
                 count_W = wrong[i];
-                count_Ra += (count_Ri + count_W);
+                count_Ra = count_Ra + (count_Ri + count_W);
                 if (count_Ri + count_W == 0){
                     if (i == 0) continue;
                     else if (i == 1){
-                    // TODO: Repeat digits (special case: 8 dropped in 2 intent)
+                    // Repeat digits (special case: 8 dropped in 2 intent)
+                        for (int j = 0; j < TEN; j++) removed.add(j);
+                        dropped.forEach(x -> removed.removeIf(n -> n == x));
+                        for (int j = 0; j < modified.length; j++) {
+                            Collections.shuffle(removed);
+                            modified[j] = removed.get(0);
+                        }
                     }
                 } 
-                count_Ra += (count_Ri + count_W);
                 while (count_Ri > 0 || count_W > 0){
                     if (count_Ri != 0){
-                        Collections.shuffle(numbers);
-                        matrix[2][numbers.get(0)] = matrix[i][numbers.get(0)];
+                        Collections.shuffle(index);
+                        modified[index.get(0)] = matrix[i][index.get(0)];
                         removed.add(matrix[i][numbers.get(0)]); // 7
                         index.remove(numbers.get(0));//rm index 2 obj from array
                         numbers.remove(0); // del 2 index
@@ -99,11 +104,11 @@ public class MixRandNums {
                         Collections.shuffle(numbers);
                         Collections.shuffle(index);
                         if (index.get(0) != numbers.get(0)){
-                            matrix[2][index.get(0)] = matrix[i][numbers.get(0)];
+                            modified[index.get(0)] = matrix[i][numbers.get(0)];
                             removed.add(matrix[i][numbers.get(0)]);
                             numbers.remove(0);
                         } else {
-                            matrix[2][index.get(0)] = matrix[i][numbers.get(1)];
+                            modified[index.get(0)] = matrix[i][numbers.get(1)];
                             removed.add(matrix[i][numbers.get(1)]);
                             numbers.remove(1);
                         }
@@ -116,19 +121,22 @@ public class MixRandNums {
             boolean my_band = false;
             while (count_Ra < 4) {
                 if (!my_band){
+                    ArrayList<Integer> aux = new ArrayList<>();
                     for (int i = 0; i < TEN; i++) numbers.add(i);
                     for (int i = 0; i < 2; i++) {
                         for (int j = 0; j < modified.length; j++) {
-                            numbers.remove(matrix[i][j]);
+                            aux.add(matrix[i][j]);
                         }
                     }
+                    aux.forEach(x -> numbers.removeIf(n -> x == n));
                 }
                 Collections.shuffle(numbers);
                 Collections.shuffle(index);
-                matrix[2][index.get(0)] = numbers.get(0);
+                modified[index.get(0)] = numbers.get(0);
                 numbers.remove(0);
                 index.remove(0);
                 count_Ra++;
+                my_band = true;
             }
         } else {
             // TODO: Implement the gross function

@@ -12,11 +12,6 @@ public class Algoritmo {
     // * These are the counters for each attempt
     private byte count_right = 0;
     private byte count_wrong = 0;
-    // * These are the prematch and match
-    private boolean[] prematch_first  = {false, false, false, false};
-    private boolean[] prematch_second = {false, false, false, false};
-    private boolean[] match_first  = {false, false, false, false};
-    private boolean[] match_second = {false, false, false, false};
     // * This matrix saves all the attempts and the counters too.
     private int[][] matrix = new int[9][4];
     // * This matrix saves all the wrong and right number of digits
@@ -72,56 +67,51 @@ public class Algoritmo {
     }
 
     public boolean checkNumEquals(final int[] first, int[] second){
+        // * These are the prematch and match
+        boolean[] prematch_first  = {false, false, false, false};
+        boolean[] prematch_second = {false, false, false, false};
+        boolean[] match_first  = {false, false, false, false};
+        boolean[] match_second = {false, false, false, false};
         // Initializing counters
         count_right = 0;
         count_wrong = 0;
-        // Creating nested cycles for checking both numbers
+        ArrayList<Integer> aux_first = new ArrayList<>();
+        boolean band_first = false;
         for (int i = 0; i < 4; i++) {
             if (MixRandNums.contains(first, second[i])){
                 for (int j = 0; j < 4; j++) {
-                    if (second[i] == first[j]) {
-                        if (i == j) {
-                            if (prematch_first[j] == true || 
-                                    prematch_second[i] == true) {
-                                // Deleting prematch
-                                prematch_first[j] = false;
-                                prematch_second[i] = false;
-                                // Substracting 1 from count_wrong
-                                count_wrong--;
-                                // Adding 1 from count_right
-                                count_right++;
-                                // Creating match
-                                match_first[j] = true;
-                                match_second[i] = true;
-                            } else {
-                                // Adding 1 from count_right
-                                count_right++;
-                                // Creating match
-                                match_first[j] = true;
-                                match_second[i] = true;
+                    if (second[i] == first[j] && i == j) {
+                        if (prematch_first[j] || prematch_second[i]){
+                            prematch_first[j] = false;
+                            prematch_second[i] = false;
+                            if (band_first){
+                                prematch_first[aux_first.get(0)] = false;
                             }
+                            count_wrong--;
+                            count_right++;
+                            match_first[j] = true;
+                            match_second[i] = true;
                         } else {
-                            if (match_first[j] == false && 
-                                            match_second[i] == false){
-                                if (prematch_first[j] == false &&
-                                        prematch_second[i] == false){
-                                    // Adding 1 from count_wrong
-                                    count_wrong++;
-                                    // Creating prematch
-                                    prematch_first[j]  = true;
-                                    prematch_second[i] = true;
-                                }
-                            }
+                            count_right++;
+                            match_first[j] = true;
+                            match_second[i] = true;
                         }
-                    } 
+                    } else if (second[i] == first[j] && i != j) {
+                        if ((!match_first[j] && !match_second[i])
+                            && (!prematch_first[j] && !prematch_second[i])
+                            && (first[j] != second[j])){
+
+                            count_wrong++;
+                            prematch_first[j]  = true;
+                            prematch_second[i] = true;
+                            aux_first.add(j);
+                            band_first = true;
+                        }
+                    }
                 }
             } 
-        }
-        for (int i = 0; i < first.length; i++) {
-            prematch_first[i] = false;
-            prematch_second[i] = false;
-            match_first[i] = false;
-            match_second[i] = false;
+            band_first = false;
+            aux_first.clear();
         }
         return count_right == 4;
     }
