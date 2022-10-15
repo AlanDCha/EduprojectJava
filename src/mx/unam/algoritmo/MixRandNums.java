@@ -41,13 +41,6 @@ public class MixRandNums {
         return num;
     }
 
-    public static int[] mixDiffRandDigits(ArrayList<Integer> dropped){
-        int[] num = new int[4];
-        Collections.shuffle(dropped);
-        for (int i = 0; i < num.length; i++) num[i] = dropped.get(i);
-        return num;
-    }
-
     public static boolean contains(final int[] arr, final int key){
         return Arrays.stream(arr).anyMatch(i -> i == key);
     }
