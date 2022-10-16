@@ -20,10 +20,11 @@ public class Algoritmo {
     private ArrayList<Integer> counters_wrong = new ArrayList<>();
     // * This is a flag that indicates if the whole number generated is right
     private boolean is_right = false;
-    // * This array save all pre-pinned numbers 
-    private ArrayList<Integer> prepin_nmbs = new ArrayList<>();
     // * This array save all pinned numbers 
-    private ArrayList<Integer> pinned_nmbs = new ArrayList<>();
+    private ArrayList<Integer> pinned_nmbs_index0 = new ArrayList<>();
+    private ArrayList<Integer> pinned_nmbs_index1 = new ArrayList<>();
+    private ArrayList<Integer> pinned_nmbs_index2 = new ArrayList<>();
+    private ArrayList<Integer> pinned_nmbs_index3 = new ArrayList<>();
     // * This arrraylist matrix saves all not pinned numbers
     private ArrayList<Integer> not_pinned_nmbs_index0 = new ArrayList<>();
     private ArrayList<Integer> not_pinned_nmbs_index1 = new ArrayList<>();
@@ -38,9 +39,11 @@ public class Algoritmo {
     // * Flag that detect if the intent 3 was repeated
     private boolean two_repeated = false;
     // * Flag that detect when it's needed to analize
-    private boolean once_alghoritm = false;
-    // * Flag that detect whent the 4 intent was repeated 4 times
+    private boolean once_algorithm = false;
+    // * Flag that detect when the 4 intent was repeated 4 times
     private boolean four_times = false;
+    // * Flag that detect when the number has to be repeated 4 times
+    private boolean repeated_four_times = false;
 
     public Algoritmo(int[] number){
         this.number = number;
@@ -58,6 +61,7 @@ public class Algoritmo {
             System.out.println("||Ciclo: " + intent + " ||");
             if (checkNumEquals(number, compar)) {
                 is_right = true;
+                printOut(compar);
                 break;
             } else {
                 for (int i = 0; i < compar.length; i++) {
@@ -160,6 +164,10 @@ public class Algoritmo {
                 to_choose.remove((Object)compare[i]);
             }
         }
+        if (repeated_four_times){
+            modified = repeatDigitFourTimes();
+            return modified;
+        }
         if (intent == 1){
             modified = MixRandNums.mixDiffRandDigits(compare);
             return modified;
@@ -175,23 +183,33 @@ public class Algoritmo {
                         to_choose.add(matrix[i][j]); 
                     }
                 }
-                modified = alghoritm();
-                once_alghoritm = true;
+                modified = algorithm();
+                once_algorithm = true;
             } else {
                 modified = repeatTwoDigitsInThree();
                 two_repeated = true;
             }
         }
         if (intent == 3){
+            total = 0;
+            for (int i = 0; i < 3; i++) {
+                total = total + (counters_right.get(i) + 
+                    counters_wrong.get(i));
+            }
+            if (total == 1) {
+                modified = repeatDigitFourTimes();
+                four_times = true;
+                return modified;
+            }
             // * flag that indicates if the prev intent was repeated: 6, 6, 8, 8
             if (two_repeated && 
                 counters_right.get(intent - 1) + 
                 counters_wrong.get(intent - 1) != 0){
-                modified = repeatDigitFourTimesIntentThree(compare);
+                modified = repeatDigitFourTimesIntentFour(compare);
                 four_times = true;
             } else {
-                modified = alghoritm();
-                once_alghoritm = true;
+                modified = algorithm();
+                once_algorithm = true;
             }
         }
         if (intent == 4){
@@ -208,13 +226,29 @@ public class Algoritmo {
                         }
                     }
                 }
-                modified = alghoritm();
+                total = 0;
+                for (int i = 0; i < 4; i++) {
+                    total = total + (counters_right.get(i) + 
+                        counters_wrong.get(i));
+                    if (i == 2 && total == 4){
+                        modified = algorithm();
+                        return modified;
+                    }
+                    if (i == 3 && total == 1){
+                        // repeat digits 4 times
+                        repeated_four_times = true;
+                        modified = repeatDigitFourTimes();
+                        return modified;
+                    }
+                }
             }
+            modified = algorithm();
         }
+        if (intent > 5) modified = algorithm();
         return modified;
     }
 
-    public int[] alghoritm(){
+    public int[] algorithm(){
         // Taking care of array previous  and (R, W)
         int[] modified = new int[4];
         int count_R;
@@ -225,53 +259,65 @@ public class Algoritmo {
         ArrayList<Integer> arr_index_it = new ArrayList<>();
         for (int i = 0; i < modified.length; i++) index.add(i);
 
-        if (once_alghoritm){
+        if (once_algorithm){
             unpinnedDigitsOnlyRights();
-        } else {
-            for (int i = intent - 1; i >= 0; i--) {
-                for (int j = 0; j < modified.length; j++) arr_index_it.add(j);
-                count_R = counters_right.get(i);
-                count_W = counters_wrong.get(i);
-                if (count_R + count_W == 0) continue;
-                // check if a digit into "n" array from matrix is repeated 4
-                if (isRepeatedFourTimes(matrix[i])) continue;
-                while (count_R > 0 || count_W > 0) {
-                    if (count_R != 0) {
-                        // Shuffle the modified index
-                        Collections.shuffle(index);
-                        // Adding the number from n matrix array being the same 
-                        // position
-                        for (int j = 0; j < modified.length; j++){
-                            if (!to_choose.contains(matrix[i][index.get(i)])){
-                                modified[index.get(0)] = matrix[i][index.get(0)];
-                            }
-                            // * Continue with no pinned numbers
-                        }
-                        // Removing the index what can't be used anymore
-                        index.remove(0);
-                        count_R--;
-                    } else if (count_W != 0){
-                        // Shuffle the modified index and the n array index
-                        Collections.shuffle(arr_index_it);
-                        Collections.shuffle(index);
-                        for (int j = 0; j < modified.length; j++) {
-                            if (to_choose.contains(matrix[i][arr_index_it.get(i)])
-                                && index.get(0) != arr_index_it.get(i)){
-                                // assign and remove the index in both variables
-                                modified[index.get(0)] = 
-                                    matrix[i][arr_index_it.get(i)];
-                                arr_index_it.remove(i);
-                            }
-                        }
-                        // Remove the index
-                        index.remove(0);
-                        count_W--;
-                    }
-                }
-                arr_index_it.clear();
+            pinnedDigitsOnlyRights();
+            modified = pullPinnedArrayLists();
+            for (int i = 0; i < modified.length; i++) {
+                if (!checkEmptyPinnedArrayLists(i)) index.remove(i);
             }
-
+        } 
+        for (int i = intent - 1; i >= 0; i--) {
+            for (int j = 0; j < modified.length; j++) arr_index_it.add(j);
+            count_R = counters_right.get(i);
+            count_W = counters_wrong.get(i);
+            if (count_R + count_W == 0) {
+                arr_index_it.clear();
+                continue;
+            }
+            // check if a digit into "n" array from matrix is repeated 4
+            if (isRepeatedFourTimes(matrix[i])){
+                arr_index_it.clear();
+                continue;
+            } 
+            while (count_R > 0 || count_W > 0) {
+                if (count_R != 0) {
+                    // Shuffle the modified index
+                    Collections.shuffle(index);
+                    // Adding the number from n matrix array being the same 
+                    // position
+                    for (int j = 0; j < modified.length; j++){
+                        if (to_choose.contains(matrix[i][index.get(i)])){
+                            modified[index.get(0)] = matrix[i][index.get(0)];
+                        }
+                        // * Continue with no pinned numbers
+                    }
+                    // Removing the index what can't be used anymore
+                    index.remove(0);
+                    count_R--;
+                } else if (count_W != 0){
+                    // Shuffle the modified index and the n array index
+                    Collections.shuffle(arr_index_it);
+                    Collections.shuffle(index);
+                    for (int j = 0; j < modified.length; j++) {
+                        if (to_choose.contains(matrix[i][arr_index_it.get(i)])
+                            && index.get(0) != arr_index_it.get(i)){
+                            // assign and remove the index in both variables
+                            modified[index.get(0)] = 
+                                matrix[i][arr_index_it.get(i)];
+                            arr_index_it.remove(i);
+                            // break;
+                        }
+                    }
+                    // Remove the index
+                    index.remove(0);
+                    count_W--;
+                }
+            }
+            arr_index_it.clear();
         }
+
+        
 
 
         return modified;
@@ -281,10 +327,19 @@ public class Algoritmo {
         int[] modified = new int[4];
         // TODO: Complete the function
         // sort the digits taking care of matrix
-        if (once_alghoritm){
+        if (once_algorithm){
 
         }
         return modified;
+    }
+
+    public int[] repeatDigitFourTimes(){
+        int[] repeated = new int[4];
+        Collections.shuffle(to_choose);
+        for (int i = 0; i < repeated.length; i++) {
+            repeated[i] = to_choose.get(0);
+        }
+        return repeated;
     }
 
     public int[] repeatTwoDigitsInThree(){
@@ -306,7 +361,7 @@ public class Algoritmo {
         return renewed;
     }
 
-    public int[] repeatDigitFourTimesIntentThree(int[] compare){
+    public int[] repeatDigitFourTimesIntentFour(int[] compare){
         int[] repeated = new int[4];
         int item = 0;
         for (int iterable : compare) {
@@ -378,4 +433,124 @@ public class Algoritmo {
                 break;
         }
     }
+
+    public void addNumToPinnedArrayLists(int index, int number){
+        switch (index) {
+            case 0:
+                pinned_nmbs_index0.add(number);
+                break;
+            case 1:
+                pinned_nmbs_index1.add(number);
+                break;
+            case 2:
+                pinned_nmbs_index2.add(number);
+                break;
+            case 3:
+                pinned_nmbs_index3.add(number);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public boolean checkNotPinnedArrayLists(int index, int number){
+        switch (index) {
+            case 0:
+                if (not_pinned_nmbs_index0.contains(number)) return true;
+                break;
+            case 1:
+                if (not_pinned_nmbs_index1.contains(number)) return true;
+                break;
+            case 2:
+                if (not_pinned_nmbs_index2.contains(number)) return true;
+                break;
+            case 3:
+                if (not_pinned_nmbs_index3.contains(number)) return true;
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    public void pinnedDigitsOnlyRights(){
+        int[] only_rights = new int[4];
+        int attempt = 0;
+        boolean found = false;
+        int count = 0;
+        while (found || count < intent - 1) {
+            for (int i = 0; i < intent; i++) {
+                if (counters_right.get(i) != 0 && counters_wrong.get(i) == 0) {
+                    only_rights = matrix[i];
+                    attempt = i;
+                    found = true;
+                    break;
+                }
+            }
+            if (found){
+                for (int i = attempt; i < intent; i++) {
+                    if (counters_right.get(i) == 0 &&
+                        counters_wrong.get(i) != 0) {
+                        for (int j = 0; j < only_rights.length; j++) {
+                            if (matrix[attempt][j] == matrix[i][j]){
+                                addNumToPinnedArrayLists(j, 
+                                    matrix[attempt][j]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean checkPinnedArrayLists(int index, int number){
+        switch (index) {
+            case 0:
+                if (pinned_nmbs_index0.contains(number)) return true;
+                break;
+            case 1:
+                if (pinned_nmbs_index1.contains(number)) return true;
+                break;
+            case 2:
+                if (pinned_nmbs_index2.contains(number)) return true;
+                break;
+            case 3:
+                if (pinned_nmbs_index3.contains(number)) return true;
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    public boolean checkEmptyPinnedArrayLists(int index){
+        switch (index) {
+            case 0:
+                if (pinned_nmbs_index0.isEmpty()) return false;
+                break;
+            case 1:
+                if (pinned_nmbs_index1.isEmpty()) return false;
+                break;
+            case 2:
+                if (pinned_nmbs_index2.isEmpty()) return false;
+                break;
+            case 3:
+                if (pinned_nmbs_index3.isEmpty()) return false;
+                break;
+        
+            default:
+                break;
+        }
+        return true;
+    }
+
+    public int[] pullPinnedArrayLists(){
+        int[] array = new int[4];
+        if (!pinned_nmbs_index0.isEmpty()) array[0] = pinned_nmbs_index0.get(0);
+        if (!pinned_nmbs_index1.isEmpty()) array[1] = pinned_nmbs_index1.get(1);
+        if (!pinned_nmbs_index2.isEmpty()) array[2] = pinned_nmbs_index2.get(2);
+        if (!pinned_nmbs_index3.isEmpty()) array[3] = pinned_nmbs_index3.get(3);
+        return array;
+    }
+
 }
