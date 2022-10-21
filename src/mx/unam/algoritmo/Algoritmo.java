@@ -11,8 +11,8 @@ public class Algoritmo {
     // * This is the number to compare
     private int[] compar = MixRandNums.mixDiffRandDigits();
     // * These are the counters for each attempt
-    private int count_right = 0;
-    private int count_wrong = 0;
+    private static int count_right = 0;
+    private static int count_wrong = 0;
     // * This matrix saves all the attempts and the counters too.
     private int[][] matrix = new int[9][4];
     // * This matrix saves all the wrong and right number of digits
@@ -85,7 +85,7 @@ public class Algoritmo {
         }
     }
 
-    public boolean checkNumEquals(final int[] first, int[] second){
+    public static boolean checkNumEquals(final int[] first, int[] second){
         // * These are the prematch and match
         boolean[] prematch_first  = {false, false, false, false};
         boolean[] prematch_second = {false, false, false, false};
@@ -135,7 +135,7 @@ public class Algoritmo {
         return count_right == 4;
     }
 
-    public void printOut(int[] two) {
+    public static void printOut(int[] two) {
         // Printing numbers
         System.out.println("Number generated");
         System.out.println(Arrays.toString(two));
